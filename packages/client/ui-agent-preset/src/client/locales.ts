@@ -34,18 +34,18 @@ export const en: Record<AgentPresetSettingsKey, string> = {
   builtIn: 'Built-in',
   setDefault: 'Set as default',
   view: 'View',
-  presetStandardName: 'Standard mode',
+  presetStandardName: 'Coworker',
   presetStandardDescription:
-    'Full coding agent with file editing, shell, file and web search, skills, planning, goals, subagents, and workflows.',
-  presetCodeName: 'Code mode',
+    'The full work agent — file editing, shell, file and web search, skills, plans, goals, subagents, and workflows. Best for research and office work.',
+  presetCodeName: 'Coder',
   presetCodeDescription:
-    'All Standard mode capabilities, with tools exposed through the Code Mode SDK so the model can combine multi-step operations in one TypeScript program.',
-  presetMinimalName: 'Minimal mode',
+    'Everything Coworker has, plus the Code Mode SDK — the model composes multi-step operations as a TypeScript program. Best for programming, building, and shipping.',
+  presetMinimalName: 'Assistant',
   presetMinimalDescription:
-    'Two-tool coding agent with persistent bash and str_replace_editor.',
-  presetCordisName: 'Creator mode',
+    'The two-tool agent — persistent bash and a text editor, nothing else. The leanest helper.',
+  presetCordisName: 'Creator',
   presetCordisDescription:
-    'Built for creating custom agent presets, with all Standard mode capabilities plus runtime inspection, plugin experiments, and preset-authoring guidance.',
+    'For authoring custom agent presets — all Coworker capabilities, plus runtime inspection, plugin experiments, and preset-authoring guidance.',
   duplicate: 'Duplicate',
   duplicateUnavailable: 'This deployment has no writable preset directory',
   delete: 'Delete',

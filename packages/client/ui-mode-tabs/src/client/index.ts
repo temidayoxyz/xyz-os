@@ -32,9 +32,12 @@ export const inject = ['slots', 'locale', 'connection', 'remote']
  * @param ctx - the browser plugin context.
  */
 export function apply(ctx: ClientContext): void {
+  // TEMP diagnostics (remove once the tabs are confirmed live).
+  console.info('[ui-mode-tabs] apply running')
   ctx.effect(() => ctx.locale.register('sidebar.modes', { zh, en }), 'ui-mode-tabs: dictionaries')
 
   ctx.inject(['slots', 'conversation', 'sessions', 'workspaces'], (scope) => {
+    console.info('[ui-mode-tabs] conversation scope entered')
     const api = (scope.get('connection') as ConnectionHandle).api
     const seat = new ModeSeatController(api, () => {
       const state = scope.sessions.list.getSnapshot()
@@ -90,6 +93,7 @@ export function apply(ctx: ClientContext): void {
         pick,
       }),
     }, ModeTabs)
+    console.info('[ui-mode-tabs] sidebar.modes registered')
     return () => { modes() }
   })
 }
