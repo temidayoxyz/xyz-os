@@ -9,6 +9,7 @@
  * loud element in the column, echoing the wordmark badge above it.
  */
 
+import { useEffect } from 'react'
 import type { ComponentType } from 'react'
 import type { AgentPresetSeatState } from '@deepseek-ai/dsh-client-ui-agent-preset/client'
 import type { SnapshotStore } from '@deepseek-ai/dsh-client-runtime/client'
@@ -26,6 +27,8 @@ export interface ModeTabsInjected {
     /** Seat snapshot bound by the renderer as useModeSeat. */
     modeSeat: SnapshotStore<AgentPresetSeatState>
   }
+  /** Read the roster when the tabs first render (the chip may never mount). */
+  load: () => Promise<void>
   /** Stage one mode's preset; starts a new session when the current one refuses the swap. */
   pick: (presetId: string) => void
 }
@@ -58,8 +61,16 @@ const MODES: readonly ModeTab[] = [
  * @param props - composed slot props.
  * @returns the tabs, or null when the deployment composes none of the mode presets.
  */
-export function ModeTabs({ wide, useModeSeat, pick, t }: ModeTabsProps) {
+export function ModeTabs({ wide, useModeSeat, load, pick, t }: ModeTabsProps) {
   const state = useModeSeat(snapshot => snapshot)
+
+  // The tabs outlive the hero chip (which also loads this roster), so they
+  // read it themselves on mount — otherwise a session view with no hero visit
+  // would render an empty options list and hide the switch.
+  useEffect(() => {
+    void load()
+  }, [load])
+
   const roster = new Set(state.options.map(option => option.id))
   const modes = MODES.filter(mode => roster.has(mode.presetId))
   // A deployment without the mode presets has nothing to switch between.

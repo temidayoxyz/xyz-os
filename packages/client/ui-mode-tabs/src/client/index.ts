@@ -31,6 +31,8 @@ const AGENT_PRESET_SEAT_KEY = 'dsh.client.agent-preset.seat'
 /** What the tabs need from the shared seat (the real controller is richer). */
 export interface SharedAgentPresetSeat {
   readonly store: SnapshotStore<AgentPresetSeatState>
+  /** Read the roster; the tabs call it on mount like the hero chip does. */
+  load(): Promise<void>
   select(id: string): Promise<void>
   stage(id: string): void
 }
@@ -73,6 +75,7 @@ export function apply(ctx: ClientContext): void {
       locale: 'sidebar.modes',
       inject: (): ModeTabsInjected => ({
         hooks: { modeSeat: seat.store },
+        load: () => seat.load(),
         pick,
       }),
     }, ModeTabs)
