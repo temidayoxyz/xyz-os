@@ -21,9 +21,6 @@
       "path": "../../test-support/client-runtime"
     },
     {
-      "path": "../ui-agent-preset"
-    },
-    {
       "path": "../ui-conversation"
     },
     {

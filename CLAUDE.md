@@ -56,7 +56,7 @@ Files of THEIRS the tabs feature edits (re-apply on conflict):
 | `tsconfig.client.json` | reference to `./packages/client/ui-mode-tabs` |
 | `apps/cli/config/agent-presets/design/` | the Design preset (new files, no conflicts) |
 
-Tabs map to presets: Work → `standard`, Code → `code`, Design → `design` (see `ModeTabs.tsx` MODES).
+Tabs map to presets: Coworker → `standard`, Coder → `code`, Designer → `design` (see `ModeTabs.tsx` MODES). The switch owns its controller (`ModeSeatController.ts`) — it converges with the hero chip through the session list, not a shared service.
 
 When upstream changes one of these files, re-apply the XYZ-OS edit on top of their new version — don't blindly take theirs (loses the brand) or ours (loses their fixes).
 

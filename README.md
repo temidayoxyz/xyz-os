@@ -6,9 +6,9 @@
 
 | Mode | What it does | Engine |
 |------|--------------|--------|
-| 💼 **Work** | Files, web research, schedules, background jobs, office tools | `standard` preset |
-| 💻 **Code** | Shell, editor, LSP, tests — multi-step coding composed as programs | `code` preset (PTC mode) |
-| 🎨 **Design** | Design loop: brief → direction → artifact → critique → deliver | planned |
+| 💼 **Coworker** | Files, web research, schedules, background jobs, office tools | `standard` preset |
+| 💻 **Coder** | Shell, editor, LSP, tests — multi-step coding composed as programs | `code` preset (PTC mode) |
+| 🎨 **Designer** | Design loop: brief → direction → artifact → critique → deliver | `design` preset |
 
 Built as a personal fork of [deepseek-harness](https://github.com/deepseek-ai/deepseek-harness) — an MIT-licensed, plugin-based agent engine where *everything is a plugin*. The engine is theirs; the brand, the theme, and the point of view are mine.
 
@@ -35,13 +35,15 @@ Then in the UI: **Settings → Models** to add your key, pick a workspace folder
 
 ## The modes
 
-A **Work / Code / Design** switch sits in the sidebar, right under New Session — the tabs stage the agent preset for the next session (picking one with a session running starts a new session in that mode). The tabs are a first-party plugin, `packages/client/ui-mode-tabs`, and they ride the same seat as the new-session preset chip, so the two surfaces never disagree.
+A **Coworker / Coder / Designer** switch sits in the sidebar, right under New Session — the tabs stage the agent preset for the next session (picking one with a session running starts a new session in that mode). The tabs are a first-party plugin, `packages/client/ui-mode-tabs`, with its own seat controller that converges with the new-session preset chip through the session list.
 
 The presets live in `apps/cli/config/agent-presets/`:
 
-- **Work** is the `standard` preset — full agent with files, shell, web search, plans, goals, subagents, workflows
-- **Code** is the `code` preset — Standard capabilities plus the Code Mode SDK, where the model composes multi-step operations as a TypeScript program
-- **Design** is the `design` preset (XYZ-OS's own) — a design-studio persona with web fetch enabled, plus three skill packs that run the full loop: `design-principles` (how to think), `design-qa` (render → critic subagent → fix → compare), and a persistent `.design/` memory convention so sessions compound instead of restarting from zero
+- **Coworker** is the `standard` preset — full agent with files, shell, web search, plans, goals, subagents, workflows
+- **Coder** is the `code` preset — everything Coworker has plus the Code Mode SDK, where the model composes multi-step operations as a TypeScript program
+- **Designer** is the `design` preset (XYZ-OS's own) — a design-studio persona with web fetch enabled, plus two skill packs that run the full loop: `design-principles` (how to think) and `design-qa` (render → critic subagent → fix → compare), and a persistent `.design/` memory convention so sessions compound instead of restarting from zero
+- **Assistant** is the `minimal` preset — the two-tool agent (shell + text editor), the leanest helper
+- **Creator** is the `cordis` preset — authors new presets with runtime inspection and plugin experiments
 
 ## Fork policy
 

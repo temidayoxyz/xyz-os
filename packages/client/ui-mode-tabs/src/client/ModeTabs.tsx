@@ -11,12 +11,12 @@
 
 import { useEffect } from 'react'
 import type { ComponentType } from 'react'
-import type { AgentPresetSeatState } from '@deepseek-ai/dsh-client-ui-agent-preset/client'
 import type { SnapshotStore } from '@deepseek-ai/dsh-client-runtime/client'
 import type { InjectFace, PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
 import {
   IconCodeOutline16, IconFolderOpenOutline16, IconListPenOutline16, Tooltip,
 } from '@deepseek-ai/dsh-client-ui-primitives'
+import type { ModeSeatState } from './ModeSeatController.ts'
 import type { ModeTabsLocaleKey } from './locales.ts'
 import type { SidebarModesOwnerProps } from './contract.ts'
 import css from './ModeTabs.module.css'
@@ -25,9 +25,9 @@ import css from './ModeTabs.module.css'
 export interface ModeTabsInjected {
   hooks: {
     /** Seat snapshot bound by the renderer as useModeSeat. */
-    modeSeat: SnapshotStore<AgentPresetSeatState>
+    modeSeat: SnapshotStore<ModeSeatState>
   }
-  /** Read the roster when the tabs first render (the chip may never mount). */
+  /** Read the roster when the tabs first render. */
   load: () => Promise<void>
   /** Stage one mode's preset; starts a new session when the current one refuses the swap. */
   pick: (presetId: string) => void
