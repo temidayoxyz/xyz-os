@@ -258,6 +258,11 @@
     - id: ui-agent-preset
       name: '@deepseek-ai/dsh-client-ui-agent-preset'
 
+    # XYZ-OS mode switch: the Work/Code/Design tabs in the sidebar, over the
+    # agent-preset seat provided by ui-agent-preset.
+    - id: ui-mode-tabs
+      name: '@deepseek-ai/dsh-client-ui-mode-tabs'
+
     # Plugin configuration: the host-plane sections a user owns, as expandable
     # cards. A namespace this deployment does not expose renders nothing.
     - id: ui-settings-plugins

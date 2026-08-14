@@ -35,11 +35,13 @@ Then in the UI: **Settings → Models** to add your key, pick a workspace folder
 
 ## The modes
 
-Agent presets live in `apps/cli/config/agent-presets/`:
+A **Work / Code / Design** switch sits in the sidebar, right under New Session — the tabs stage the agent preset for the next session (picking one with a session running starts a new session in that mode). The tabs are a first-party plugin, `packages/client/ui-mode-tabs`, and they ride the same seat as the new-session preset chip, so the two surfaces never disagree.
 
-- **Work** is the upstream `standard` preset — full agent with files, shell, web search, plans, goals, subagents, workflows
-- **Code** is the upstream `code` preset — standard capabilities plus the Code Mode SDK, where the model composes multi-step operations as a TypeScript program
-- **Design** is the roadmap — a design-loop workflow plugin (brief → direction → artifact → critique → deliver) with skill packs and exportable deliverables
+The presets live in `apps/cli/config/agent-presets/`:
+
+- **Work** is the `standard` preset — full agent with files, shell, web search, plans, goals, subagents, workflows
+- **Code** is the `code` preset — Standard capabilities plus the Code Mode SDK, where the model composes multi-step operations as a TypeScript program
+- **Design** is the `design` preset (XYZ-OS's own) — a design-studio persona with web fetch enabled; the design-loop workflow (brief → direction → artifact → critique → deliver) with skill packs and exportable deliverables is the next layer on top
 
 ## Fork policy
 

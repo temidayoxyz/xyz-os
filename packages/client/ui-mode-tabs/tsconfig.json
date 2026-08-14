@@ -9,31 +9,37 @@
   ],
   "references": [
     {
+      "path": "../locale"
+    },
+    {
       "path": "../../../vendor/cordis"
-    },
-    {
-      "path": "../ui-slots"
-    },
-    {
-      "path": "../ui-primitives"
-    },
-    {
-      "path": "../web-react"
     },
     {
       "path": "../runtime"
     },
     {
-      "path": "../ui-layout"
+      "path": "../../test-support/client-runtime"
     },
     {
-      "path": "../ui-mode-tabs"
+      "path": "../ui-agent-preset"
     },
     {
-      "path": "../locale"
+      "path": "../ui-conversation"
+    },
+    {
+      "path": "../ui-primitives"
+    },
+    {
+      "path": "../ui-slots"
+    },
+    {
+      "path": "../web-react"
     },
     {
       "path": "../../runtime-diagnostics/invariants"
+    },
+    {
+      "path": "../../api/remotes/tsconfig.client.json"
     }
   ]
 }

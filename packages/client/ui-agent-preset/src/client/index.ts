@@ -115,6 +115,13 @@ export function apply(ctx: ClientContext): void {
       scope.sessions.noteAgentPreset(sessionId as never, agentPreset)
     })
 
+    // XYZ-OS: publish the seat on a namespaced string key so the sidebar mode
+    // switch (ui-mode-tabs) drives this one controller instead of a shadow —
+    // the chip and the tabs are two faces of one staged choice. The client
+    // context types only known service names, so the call rides a cast.
+    const provideSeat = scope as unknown as { provide: (key: string, value: unknown) => void }
+    provideSeat.provide('dsh.client.agent-preset.seat', seat)
+
     const seatInjected = (): AgentPresetSeatInjected => ({
       hooks: { agentPresetSeat: seat.store },
       load: () => seat.load(),

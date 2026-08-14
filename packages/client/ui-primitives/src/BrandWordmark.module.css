@@ -1,0 +1,23 @@
+/* The two logo variants ride one box: the light mark is the default, and the
+   dark-theme body attribute swaps it for the dark mark. Width follows each
+   image's own ratio; both sit at the size prop's height. */
+
+.light {
+  display: block;
+  width: auto;
+  max-width: 100%;
+}
+
+.dark {
+  display: none;
+  width: auto;
+  max-width: 100%;
+}
+
+body[data-ds-dark-theme] .light {
+  display: none;
+}
+
+body[data-ds-dark-theme] .dark {
+  display: block;
+}

@@ -1,51 +1,22 @@
-// XYZ-OS brand wordmark (placeholder until the custom XYZ-OS logo lands).
-// Same 182:24 canvas as the original DeepSeek wordmark so all layout stays
-// identical. Ink rides currentColor; the badge text is knocked out in the
-// inverted label color so the plate stays legible in both themes.
-// Swap the svg body below for the real logo — nothing else needs to change.
+// XYZ-OS brand wordmark: the custom logos, light and dark variants from
+// apps/web/public/ (xyz-light.png / xyz-dark.png). CSS owns the swap — the
+// dark-theme body attribute hides the light mark and reveals the dark one.
+// The height rides the size prop; width keeps the logo's own ratio.
 
 import type { IconProps } from './icons/props.ts'
+import css from './BrandWordmark.module.css'
 
 /**
  * Render the full brand wordmark.
- * @param props.size - height in px (default 24; width keeps the 182:24 ratio).
+ * @param props.size - height in px (default 24; width keeps the logo ratio).
  * @param props.className - extra class for layout placement.
- * @returns the wordmark svg (aria-hidden decorative brand art).
+ * @returns the wordmark (aria-hidden decorative brand art).
  */
 export function BrandWordmark({ size = 24, className }: IconProps) {
   return (
-    <svg
-      width={(size * 182) / 24}
-      height={size}
-      className={className}
-      viewBox="0 0 182 24"
-      fill="none"
-      aria-hidden="true"
-    >
-      {/* XYZ badge — red plate (brand-500) with knocked-out initials */}
-      <rect x="0" y="2" width="76" height="20" rx="4" fill="var(--dsw-static-deepseek-500)" />
-      <text
-        x="38"
-        y="17"
-        textAnchor="middle"
-        fontFamily="system-ui, sans-serif"
-        fontSize="13"
-        fontWeight="800"
-        fill="var(--dsw-alias-label-primary-inverted)"
-      >
-        XYZ
-      </text>
-      {/* OS suffix rides the current text color */}
-      <text
-        x="84"
-        y="17"
-        fontFamily="system-ui, sans-serif"
-        fontSize="14"
-        fontWeight="600"
-        fill="currentColor"
-      >
-        · OS
-      </text>
-    </svg>
+    <span className={className} style={{ height: size }} aria-hidden="true">
+      <img src="/xyz-light.png" alt="" className={css.light} style={{ height: size }} />
+      <img src="/xyz-dark.png" alt="" className={css.dark} style={{ height: size }} />
+    </span>
   )
 }
