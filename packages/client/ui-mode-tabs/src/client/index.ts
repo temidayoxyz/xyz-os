@@ -4,15 +4,17 @@
  * chip stages — the tabs are a second face of one choice, so the two surfaces
  * can never disagree.
  *
- * The seat itself is provided by ui-agent-preset in the conversation scope;
- * the key is a global symbol so the two plugin bundles resolve one instance.
- * Absent the preset surface the tabs render nothing.
+ * The seat is provided on the ROOT context by ui-agent-preset (from its own
+ * fiber, which may start after this one). The registration lives in a cordis
+ * effect that tracks the seat read, so it lands the moment the seat exists —
+ * and re-lands if it is ever re-provided. Absent the preset surface the tabs
+ * render nothing.
  */
 
 // Type-only: pulls the locale plugin's Context merge (ctx.locale).
 import type {} from '@deepseek-ai/dsh-client-locale/client'
-// Type-only: pulls the conversation scope services (sessions, workspaces).
-import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
+// Type-only: pulls the sessions/workspaces services on the root context.
+import type {} from '@deepseek-ai/dsh-client-runtime/client'
 // Type-only: the shared seat's store shape.
 import type { AgentPresetSeatState } from '@deepseek-ai/dsh-client-ui-agent-preset/client'
 import type { ClientContext, SnapshotStore } from '@deepseek-ai/dsh-client-runtime/client'
@@ -47,15 +49,15 @@ export const inject = ['slots', 'locale', 'connection', 'remote']
 export function apply(ctx: ClientContext): void {
   ctx.effect(() => ctx.locale.register('sidebar.modes', { zh, en }), 'ui-mode-tabs: dictionaries')
 
-  ctx.inject(['slots', 'conversation', 'sessions', 'workspaces'], (scope: ClientContext) => {
-    // ui-agent-preset provides the seat in this same scope (same service
-    // tuple → same scope instance) and sits earlier in the composition, so
-    // the provide lands before this get runs.
-    const seat = (scope.get as (key: string) => unknown)(AGENT_PRESET_SEAT_KEY) as SharedAgentPresetSeat | undefined
+  // The seat read is tracked: when ui-agent-preset's fiber provides the
+  // service, this effect re-runs and the registration lands. A one-shot get
+  // at apply time could lose a fiber-startup race and hide the tabs forever.
+  ctx.effect(() => {
+    const seat = (ctx.get as (key: string) => unknown)(AGENT_PRESET_SEAT_KEY) as SharedAgentPresetSeat | undefined
     if (seat === undefined) return () => {}
 
     const pick = (id: string): void => {
-      const state = scope.sessions.list.getSnapshot()
+      const state = ctx.sessions.list.getSnapshot()
       const summary = state.current === undefined ? undefined : state.byId[state.current]
       // A blank session (or none at all) takes the pick directly: the seat
       // stages, and applies the moment a blank session is current. A started
@@ -67,10 +69,10 @@ export function apply(ctx: ClientContext): void {
         return
       }
       seat.stage(id)
-      scope.workspaces.startSession()
+      ctx.workspaces.startSession()
     }
 
-    const modes = scope.slots.register({
+    const modes = ctx.slots.register({
       name: 'sidebar.modes',
       locale: 'sidebar.modes',
       inject: (): ModeTabsInjected => ({
@@ -80,5 +82,5 @@ export function apply(ctx: ClientContext): void {
       }),
     }, ModeTabs)
     return () => { modes() }
-  })
+  }, 'ui-mode-tabs: sidebar mode switch')
 }
