@@ -1,11 +1,11 @@
 ---
 name: design-qa
-description: Mandatory visual quality-assurance loop for design work: render the artifact headlessly, critique it (visually when the model has vision, via pixel sampling when it does not), fix findings, re-render. Use this Skill for every HTML/CSS/SVG design artifact before delivering.
+description: Mandatory visual quality-assurance loop for design work: render the artifact headlessly, run the critic pass (a subagent forbidden from writing code that produces a structured visual diagnosis), fix findings, re-render, compare. Use this Skill for every HTML/CSS/SVG design artifact before delivering.
 ---
 
 # Design QA loop
 
-Every design artifact MUST pass through this loop before delivery. A design nobody looked at is not done. If the current model can read images, critique visually; if it cannot (the model may report "does not declare image input"), fall back to pixel sampling and DOM dumps — but never skip the loop.
+Every design artifact MUST pass through this loop before delivery. A design nobody looked at is not done. The loop has three stages: **render → critic → fix-and-compare**.
 
 ## 1. Render
 
@@ -22,26 +22,36 @@ If the render fails with mojo/crashpad access errors, retry once with a wider sa
 
 Render at least two viewports: desktop (1440 wide) and mobile (390 wide). Check the mobile shot for overflow and broken stacking.
 
-## 2. Critique
+## 2. Critic pass
 
-Check every item; a finding must be fixed or deliberately waived:
+Spawn a **subagent** that is forbidden from writing code. Its only output is a structured visual diagnosis. Use the subagent tool with:
 
-- **Spacing scale** — paddings and gaps come from one scale (e.g., 4px multiples); no two nearly-but-not-equal gaps
-- **Alignment grid** — every element left-aligns or centers on a shared edge; no 1–3px strays
-- **Typography** — max two families (display + body); no more than three weights; line-height and letter-spacing set deliberately
-- **Contrast** — text meets WCAG AA on its background; don't trust, sample the pixels
-- **Color discipline** — accent used once or twice per view, not everywhere; grays are neutral, not tinted
-- **States** — hover, focus-visible, active exist and are visible; keyboard focus is never removed
-- **Motion** — one orchestrated moment beats scattered effects; `prefers-reduced-motion` is honored
-- **Copy** — real content, no lorem ipsum, no fake stats, no invented brand facts
+**persona:**
 
-## 3. Vision-capable model
+> You are a ruthless design critic reviewing a rendered web page. You never write or edit code — you diagnose. Judge what you see as a principal designer would.
 
-Read the screenshot and critique what you SEE: layout, hierarchy, whitespace, whether the signature element lands. If `read_image` fails because the model has no image input, do not pretend to look — switch to pixel sampling.
+**prompt:**
 
-## 4. Pixel sampling (vision-less fallback)
+> Read the artifact file `<path>/index.html` and its rendered screenshots `<path>/full.png` (desktop) and `<path>/mobile.png` (mobile). If you can view images, critique them visually. Produce a structured diagnosis with exactly these sections:
+>
+> 1. Hierarchy — does the eye know where to go first?
+> 2. Composition — does the layout feel intentional from its silhouette?
+> 3. Typography — does type establish hierarchy and personality?
+> 4. Spacing — is the rhythm systematic (one scale, no near-equal gaps)?
+> 5. Alignment — do elements belong to one visual system?
+> 6. Responsiveness — does mobile feel designed, not compressed?
+> 7. Interaction — are states (hover/focus/active/loading/error) believable and complete?
+> 8. Motion — does movement add value and stay controlled? Is reduced-motion honored?
+> 9. Genericness — name the three most generic aspects and the AI-slop patterns present, if any
+> 10. Verdict per dimension: a 1–10 score for hierarchy, composition, typography, spacing, alignment, consistency, distinctiveness, usability, responsiveness, motion, color, polish
+>
+> End with a Top-5 fixes list: the five concrete changes with the biggest quality gain, most specific first. Report only — do not modify files.
 
-Sample known coordinates to verify layout and colors programmatically:
+If no subagent provider is available, perform the critic pass yourself in one structured block following the same template BEFORE writing any fix. The rule is the same either way: **diagnosis first, code after.**
+
+## 3. Vision-capable model vs pixel sampling
+
+If the current model can read images, critique the screenshots visually. If `read_image` fails because the model has no image input, do not pretend to look — pixel-sample instead:
 
 ```powershell
 Add-Type -AssemblyName System.Drawing
@@ -53,8 +63,16 @@ foreach ($s in $samples) {
 }
 ```
 
-Verify: background bands are where sections should be, accent pixels appear at the accent elements, no giant blank bands. Also dump the DOM (`--dump-dom`) and confirm the scripted behavior executed (classes applied, content present).
+Verify: background bands sit where sections should be, accent pixels appear at the accent elements, no giant blank bands. Also dump the DOM (`--dump-dom`) and confirm scripted behavior executed. A vision model on the Design session is always preferable — if the model reports no image input, say so in the delivery notes rather than claiming a visual review happened.
 
-## 5. Iterate
+## 4. Fix and compare
 
-Fix every confirmed finding, re-render, re-check. Deliver only after a clean pass. A "clean pass" still lists what was verified and how.
+Apply the Top-5 fixes (and any additional rubric findings), then re-render BOTH viewports and compare against the first screenshots. Confirm each fix landed and nothing regressed. Repeat the critic pass if the changes were structural. A fix that cannot be verified in the render is not a fix.
+
+## 5. Design memory
+
+At the end of the session, append to `.design/memory.md` (create it if absent): the tokens used (palette, type pairs, spacing scale, radii), what the critic caught and how it was fixed, and one lesson for next time. The next session starts by reading this file — designs should compound, not restart from zero.
+
+## 6. Delivery notes
+
+Deliver with: what was rendered and at which viewports, whether the critique was visual or pixel-sampled, the critic's top findings and which were fixed (with before/after evidence), and the final rubric scores. A "clean pass" still lists what was verified and how.

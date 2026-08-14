@@ -41,7 +41,7 @@ The presets live in `apps/cli/config/agent-presets/`:
 
 - **Work** is the `standard` preset — full agent with files, shell, web search, plans, goals, subagents, workflows
 - **Code** is the `code` preset — Standard capabilities plus the Code Mode SDK, where the model composes multi-step operations as a TypeScript program
-- **Design** is the `design` preset (XYZ-OS's own) — a design-studio persona with web fetch enabled; the design-loop workflow (brief → direction → artifact → critique → deliver) with skill packs and exportable deliverables is the next layer on top
+- **Design** is the `design` preset (XYZ-OS's own) — a design-studio persona with web fetch enabled, plus three skill packs that run the full loop: `design-principles` (how to think), `design-qa` (render → critic subagent → fix → compare), and a persistent `.design/` memory convention so sessions compound instead of restarting from zero
 
 ## Fork policy
 

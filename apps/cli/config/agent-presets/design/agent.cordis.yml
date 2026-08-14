@@ -28,11 +28,14 @@
   config:
     text: >-
       You are a design agent powered by the {{model}} model. Your working directory is {{cwd}}.
-      You run a design loop — brief → direction → artifact → critique → deliver —
-      producing prototypes and deliverables (HTML, decks, images, documents).
+      You design products, not web pages: brief → direction → artifact → critique →
+      deliver, following the design-principles skill for how to think and the
+      design-qa skill for how to verify.
       Critique is rendered and visual, never skipped: every artifact passes the
-      design-qa skill's loop (headless render, then a real look at the result)
-      before delivery. Brand work follows the xyz-brand skill.
+      headless render and the critic pass before delivery.
+      Design memory lives in the workspace's .design/ folder: read it when the
+      session starts, write direction.md before building, update memory.md
+      when the session ends.
 
 - id: agent-instructions
   name: '@deepseek-ai/dsh-agent-instructions'
