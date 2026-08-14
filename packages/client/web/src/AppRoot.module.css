@@ -18,11 +18,31 @@
 }
 
 .wordmark {
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: var(--dsw-alias-label-primary, #0f1115);
+  /* XYZ-OS: the logo pair replaces the HARNESS text; the dark-theme body
+     attribute swaps the light mark for the dark one. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightLogo {
+  display: block;
+  height: 32px;
+  width: auto;
+}
+
+.darkLogo {
+  display: none;
+  height: 32px;
+  width: auto;
+}
+
+body[data-ds-dark-theme] .lightLogo {
+  display: none;
+}
+
+body[data-ds-dark-theme] .darkLogo {
+  display: block;
 }
 
 .hint {

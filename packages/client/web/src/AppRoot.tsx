@@ -39,7 +39,11 @@ export function AppRoot(props: AppRootProps) {
   return (
     <div className={css.boot}>
       <div className={css.card}>
-        <div className={css.wordmark}>HARNESS</div>
+        {/* XYZ-OS: the boot card leads with the logo (was the HARNESS wordmark). */}
+        <div className={css.wordmark}>
+          <img className={css.lightLogo} src="/xyz-light.png" alt="" />
+          <img className={css.darkLogo} src="/xyz-dark.png" alt="" />
+        </div>
         {!loud
           ? (
             <>
