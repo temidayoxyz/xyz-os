@@ -35,7 +35,7 @@ Then in the UI: **Settings → Models** to add your key, pick a workspace folder
 
 ## The modes
 
-A **Coworker / Coder / Designer** switch sits in the sidebar, right under New Session — the tabs stage the agent preset for the next session (picking one with a session running starts a new session in that mode). The tabs are a first-party plugin, `packages/client/ui-mode-tabs`, with its own seat controller that converges with the new-session preset chip through the session list.
+Modes are picked from the **preset chip on the new-session screen** (next to the workspace picker) — the choice stages the agent preset for the session you are about to start. Running sessions keep the preset they began with.
 
 The presets live in `apps/cli/config/agent-presets/`:
 

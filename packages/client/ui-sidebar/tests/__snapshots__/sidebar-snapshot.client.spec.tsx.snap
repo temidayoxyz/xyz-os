@@ -50,10 +50,6 @@ exports[`sidebar shell snapshots > renders the collapsed rail after the crossfad
       />
     </button>
     <div
-      data-slot="sidebar.modes"
-      style="display: contents;"
-    />
-    <div
       class="regionArea"
     >
       <div
@@ -156,10 +152,6 @@ exports[`sidebar shell snapshots > renders the expanded column (wordmark, capsul
       </span>
     </button>
     <div
-      data-slot="sidebar.modes"
-      style="display: contents;"
-    />
-    <div
       class="regionArea"
     >
       <div
@@ -261,10 +253,6 @@ exports[`sidebar shell snapshots > renders the expanded column in the default lo
         新会话
       </span>
     </button>
-    <div
-      data-slot="sidebar.modes"
-      style="display: contents;"
-    />
     <div
       class="regionArea"
     >

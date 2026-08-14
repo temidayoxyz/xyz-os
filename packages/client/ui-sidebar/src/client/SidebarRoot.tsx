@@ -171,10 +171,6 @@ export function SidebarRoot({
         </button>
       </Tooltip>
 
-      {/* XYZ-OS: the mode switch (Work/Code/Design) sits between New Session
-          and the workspace browser; ui-mode-tabs owns the hole. */}
-      {renderSlot('sidebar.modes', { wide })}
-
       {/* The browsing region fills the column between the controls and the
           foot in both states; its rail icon column rides the same slot. */}
       <div className={css.regionArea}>

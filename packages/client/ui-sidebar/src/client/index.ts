@@ -48,9 +48,6 @@ export function apply(ctx: ClientContext): void {
         'sidebar.workspaces': { kind: 'single', scope: 'root' },
         'sidebar.settings': { kind: 'single', scope: 'root' },
         'sidebar.footer.action': { kind: 'list', scope: 'root' },
-        // XYZ-OS: the mode-switch hole (ui-mode-tabs) between New Session
-        // and the workspace browser.
-        'sidebar.modes': { kind: 'single', scope: 'root' },
       },
       inject: injectProps,
     }, SidebarRoot),

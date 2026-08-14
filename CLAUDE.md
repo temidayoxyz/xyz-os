@@ -37,26 +37,19 @@ A merge is not done until the app boots. If upstream bumped `SCHEMA_VERSION` (se
 | `apps/cli/config/agent-presets/*/preset.yml` | All preset names/descriptions → English (Standard, Code, Minimal, Creator) |
 | `README.md` | Fully replaced — keep ours on conflict |
 
-## XYZ-OS mode tabs (the Work/Code/Design switch)
+## Mode selection
 
-The mode switch is a first-party plugin, **`packages/client/ui-mode-tabs`** — a whole new package, so upstream merges never touch it. It rides the shared agent-preset seat (published by `ui-agent-preset` on `Symbol.for('dsh.client.agent-preset.seat')`) and registers into the `sidebar.modes` hole.
+Modes are chosen from the preset chip on the new-session screen. The presets:
 
-Files of THEIRS the tabs feature edits (re-apply on conflict):
+| Preset id | Display name | What it is |
+|-----------|--------------|------------|
+| `standard` | Coworker | Full work agent — research and office work |
+| `code` | Coder | Coworker + Code Mode SDK — programming, building, shipping |
+| `design` | Designer | Design loop with skill packs (design-principles, design-qa) |
+| `minimal` | Assistant | Two-tool agent (shell + text editor) |
+| `cordis` | Creator | Authors new presets |
 
-| File | What we changed |
-|------|-----------------|
-| `packages/client/ui-agent-preset/src/client/index.ts` | `scope.provide(Symbol.for('dsh.client.agent-preset.seat'), seat)` after the seat is created |
-| `packages/client/ui-sidebar/src/client/index.ts` | `'sidebar.modes': { kind: 'single', scope: 'root' }` added to the registration's `children` |
-| `packages/client/ui-sidebar/src/client/contract/slots.ts` | `'sidebar.modes'` added to `PropsRenderSlots` + type-only import of ui-mode-tabs |
-| `packages/client/ui-sidebar/src/client/SidebarRoot.tsx` | `renderSlot('sidebar.modes', { wide })` between New Session and the workspace browser; rail fish → red X badge svg |
-| `packages/client/ui-sidebar/tsconfig.json` | reference to `../ui-mode-tabs` |
-| `packages/client/ui-sidebar/tests/*.client.spec.tsx` | test mocks got `SessionProvider={() => null}` (upstream may fix these — prefer theirs) |
-| `packages/bundle/web-app/cordis.patch.yml` | `ui-mode-tabs` plugin entry after `ui-agent-preset` |
-| `packages/bundle/web-app/package.json` | dependency on `@deepseek-ai/dsh-client-ui-mode-tabs` |
-| `tsconfig.client.json` | reference to `./packages/client/ui-mode-tabs` |
-| `apps/cli/config/agent-presets/design/` | the Design preset (new files, no conflicts) |
-
-Tabs map to presets: Coworker → `standard`, Coder → `code`, Designer → `design` (see `ModeTabs.tsx` MODES). The switch owns its controller (`ModeSeatController.ts`) — it converges with the hero chip through the session list, not a shared service.
+Display copy for all five resolves from the locale table in `packages/client/ui-agent-preset/src/client/locales.ts` (`presetDisplayText` shadows `preset.yml` for shipped presets) — update names/descriptions THERE, and the `design` preset dir is `apps/cli/config/agent-presets/design/` (new files, no conflicts).
 
 When upstream changes one of these files, re-apply the XYZ-OS edit on top of their new version — don't blindly take theirs (loses the brand) or ours (loses their fixes).
 

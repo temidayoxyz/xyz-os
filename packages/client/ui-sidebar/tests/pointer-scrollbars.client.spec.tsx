@@ -34,11 +34,8 @@ function mountColumn(): { column: HTMLElement; quiet: () => boolean } {
       collapsed={false} width={300}
       useSessions={neverHook} useWorkspaces={neverHook}
       startSession={vi.fn()} toggleSidebar={vi.fn()} t={t}
-      SessionProvider={() => null}
-      renderSlot={((key: string, owner: SidebarSectionOwnerProps) =>
-        key === 'sidebar.modes'
-          ? <div data-testid="modes-seat" data-wide={owner.wide} />
-          : <div data-testid="region" data-wide={owner.wide} />) as SidebarRootComponentProps['renderSlot']}
+      renderSlot={((_key: string, owner: SidebarSectionOwnerProps) =>
+        <div data-testid="region" data-wide={owner.wide} />) as SidebarRootComponentProps['renderSlot']}
     />,
   )
   const column = view.container.firstElementChild
