@@ -55,9 +55,24 @@ Design each breakpoint as its own composition. A desktop layout may become a foc
 
 - Copy is design material: real, concise, product-appropriate. No lorem ipsum, no fake stats, no invented brand facts. If content is missing, invent plausible content that supports the concept.
 - Icons: one coherent language — consistent stroke weight, optical size, alignment. No emoji as UI icons. Clean inline SVG only.
-- Imagery: structural, not decorative. Consistent cropping, art direction, an intentional relationship to the page. Never sprinkle stock photos to look richer.
+- Imagery: **decided per design, never by default** (see below).
 - States: design the whole system — default, hover, active, focus, disabled, loading, error, empty. Not just the happy path. Visible keyboard focus always.
 - Accessibility: semantic HTML, correct heading order, labels, sufficient contrast. Never sacrifice usability for appearance.
+
+## Imagery — when, what, and at what size
+
+Some designs need images; most do not. Decide at direction time and record it in the direction file (`IMAGERY: none | illustration | photography | mixed` with one sentence of why). A hero that carries itself on type and composition needs no photo; a case study about a physical product does. Never add images to look richer — that is decoration.
+
+When a design needs imagery:
+
+- **Match the slot** — hero backdrops 16:9 (min 1920×1080) or 21:9; section banners 16:9; cards 4:3 or 3:2; portraits 3:4; avatars and thumbnails 1:1. Crop with intent (choose the focal point); never stretch.
+- **Size for the screen** — retina-ready (2x), responsive via `srcset`/`sizes`, WebP/AVIF with a fallback, compressed; lazy-load below the fold.
+- **Source by fit**:
+  - Generated SVG/vector art drawn in the artifact — preferred for illustrations and product visuals; zero licensing concerns, always crisp
+  - Unsplash, Pexels, Pixabay — photography; watermark-free, royalty-free, commercial use, no attribution required
+  - Wikimedia Commons / Openverse — archival and scientific imagery; check the per-image CC license
+  - Anything else: do not hotlink random URLs; if a source cannot be licensed cleanly, use generated art instead
+- **Record it** — every downloaded image gets a one-line note in the delivery: source URL + license. An image without a license note is a defect.
 
 ## 6. The direction file (design intent, made visible)
 
@@ -73,6 +88,7 @@ TYPOGRAPHY — display + body + strategy
 COLOR — the palette with a reason per color
 DENSITY / INTERACTION / RESPONSIVE STRATEGY
 MOTION — personality and role
+IMAGERY — none | illustration | photography | mixed, and why
 SIGNATURE — the one memorable element
 ```
 
