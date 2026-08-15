@@ -38,3 +38,11 @@ apps/web/dist/
 worktrees/
 .agents/worktrees/
 .typert-*/
+
+# XYZ-OS desktop shell (build artifacts and the generated runtime bundle)
+desktop/node_modules/
+desktop/src-tauri/target/
+desktop/runtime/
+desktop/src-tauri/gen/
+# The engine is rebuilt per platform by build-runtime; the binary is ~90 MB.
+desktop/src-tauri/binaries/

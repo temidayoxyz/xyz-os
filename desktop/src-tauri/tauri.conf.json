@@ -1,0 +1,44 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "XYZ-OS",
+  "version": "0.1.0",
+  "identifier": "com.xyz.os",
+  "build": {
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "XYZ-OS",
+        "width": 1280,
+        "height": 820,
+        "minWidth": 960,
+        "minHeight": 640,
+        "center": true,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "category": "DeveloperTool",
+    "shortDescription": "XYZ-OS — a personal AI operating system",
+    "longDescription": "XYZ-OS is a personal AI operating system: one local agent engine with Coworker, Coder, Designer, Assistant, and Creator modes. Everything runs on your machine.",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "externalBin": ["binaries/xyz-engine"],
+    "resources": {
+      "../runtime/runtime.tar.zst": "runtime/runtime.tar.zst"
+    }
+  }
+}

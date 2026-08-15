@@ -1,0 +1,22 @@
+{
+  "name": "xyz-os-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "tauri": "tauri",
+    "build:runtime": "node scripts/build-runtime.mjs",
+    "desktop:dev": "tauri dev",
+    "desktop:build": "node scripts/build.mjs"
+  },
+  "devDependencies": {
+    "@mongodb-js/zstd": "^2.0.0",
+    "@tauri-apps/cli": "^2",
+    "tar": "^7"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@mongodb-js/zstd"
+    ]
+  }
+}
