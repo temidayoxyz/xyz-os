@@ -23,7 +23,7 @@ XYZ-OS 桌面应用是本地代理引擎外的一层轻量 Rust/Tauri 外壳。�
 pnpm install                       # from the repository root
 pnpm run build                     # build the libraries and the web UI
 cd desktop
-pnpm install --ignore-workspace    # desktop-only tooling
+pnpm install                        # desktop-only tooling
 pnpm run desktop:build             # build runtime + app for this platform
 ```
 

@@ -13,10 +13,5 @@
     "@mongodb-js/zstd": "^2.0.0",
     "@tauri-apps/cli": "^2",
     "tar": "^7"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@mongodb-js/zstd"
-    ]
   }
 }

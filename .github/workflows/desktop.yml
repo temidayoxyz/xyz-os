@@ -86,7 +86,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install desktop tooling
-        run: pnpm --ignore-workspace --dir desktop install --frozen-lockfile
+        run: pnpm --dir desktop install --frozen-lockfile
 
       - name: Build libraries and web UI
         run: pnpm run build

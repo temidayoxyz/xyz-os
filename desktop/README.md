@@ -41,7 +41,7 @@ platform dependencies (WebView2 is built into modern Windows; Linux needs
 pnpm install                       # from the repository root
 pnpm run build                     # build the libraries and the web UI
 cd desktop
-pnpm install --ignore-workspace    # desktop-only tooling
+pnpm install                        # desktop-only tooling
 pnpm run desktop:build             # build runtime + app for this platform
 ```
 
