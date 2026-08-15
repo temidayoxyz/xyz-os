@@ -30,6 +30,8 @@ launches start immediately.
 
 - The desktop app shares the same `~/.dsh` session data as the CLI, so
   sessions and modes carry over.
+- No API keys or model credentials are bundled: each user's keys stay in their
+  own `~/.dsh` profile and are added from the Models page.
 - macOS and Linux artifacts are unsigned in this release; code signing and
   notarization require platform credentials and can be layered on without
   changing the app.

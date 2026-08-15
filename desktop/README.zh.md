@@ -15,6 +15,10 @@ XYZ-OS 桌面应用是本地代理引擎外的一层轻量 Rust/Tauri 外壳。�
 
 引擎以 `--port 0` 启动，由操作系统分配空闲端口，桌面应用因此永远不会与运行中的 `xyz web` 开发服务器冲突。外壳监听引擎 stdout 中的 `xyz web: http://...` 一行并导航过去。关闭窗口会终止引擎。
 
+## 密钥与模型
+
+桌面应用不携带任何 API 密钥或模型凭据。模型、API 密钥与设置保存在按用户的 `~/.dsh` 目录中（与 CLI 共享），通过 Models 页面或 `DEEPSEEK_API_KEY` 等环境变量配置。全新安装以空的本地配置开始，因此每个用户都添加自己的密钥；开发者的 `.env` 文件绝不会被打进安装包。
+
 ## 构建
 
 前提：Node 22.19+ 或 24+、pnpm 11、稳定版 Rust，以及 Tauri 2 的平台依赖（现代 Windows 自带 WebView2；Linux 需要 `libwebkit2gtk-4.1-dev` 等；macOS 需要 Xcode 命令行工具）。

@@ -31,6 +31,15 @@ desktop app never conflicts with a running `xyz web` dev server. The shell
 watches the engine's stdout for the `xyz web: http://...` line and navigates
 there. Closing the window kills the engine.
 
+## Keys and models
+
+The desktop app ships no API keys or model credentials. Models, API keys, and
+settings live in the per-user `~/.dsh` directory (shared with the CLI) and are
+configured from the Models page or environment variables such as
+`DEEPSEEK_API_KEY`. A fresh install starts with an empty local profile, so
+every user adds their own keys; developer `.env` files are never archived into
+the bundle.
+
 ## Building
 
 Prerequisites: Node 22.19+ or 24+, pnpm 11, Rust stable, and the Tauri 2

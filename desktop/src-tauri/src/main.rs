@@ -59,6 +59,22 @@ fn runtime_archive(app: &tauri::AppHandle) -> PathBuf {
         .expect("runtime archive path")
 }
 
+/// Engine command with no console window and no inherited stdin, so launching
+/// the app never flashes or owns a terminal.
+#[cfg(windows)]
+fn engine_command(engine: &Path) -> Command {
+    use std::os::windows::process::CommandExt;
+    const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+    let mut command = Command::new(engine);
+    command.creation_flags(CREATE_NO_WINDOW);
+    command
+}
+
+#[cfg(not(windows))]
+fn engine_command(engine: &Path) -> Command {
+    Command::new(engine)
+}
+
 /// Create a directory link pointing at `target`. Windows gets a junction
 /// (unprivileged reparse point), Unix a symlink.
 #[cfg(windows)]
@@ -220,12 +236,13 @@ fn spawn_engine(app: &tauri::AppHandle, port: u16) -> Option<Child> {
         eprintln!("[xyz-desktop] runtime incomplete: missing engine or app bundle");
         return None;
     }
-    Command::new(&engine)
+    engine_command(&engine)
         .arg(&bin)
         .arg("web")
         .arg("--port")
         .arg(port.to_string())
         .current_dir(&runtime)
+        .stdin(Stdio::null())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()

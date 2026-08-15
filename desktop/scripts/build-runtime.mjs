@@ -98,6 +98,9 @@ const EXCLUDE_ROOT_FILES = new Set([
 function copyFilter(src) {
   const rel = src.slice(repoRoot.length + 1).replaceAll('\\', '/')
   if (rel === '') return true
+  // Credentials live in the per-user ~/.dsh and environment, never in the
+  // shipped bundle; a developer's local .env files must not be archived.
+  if (rel.split('/').at(-1).startsWith('.env')) return false
   const top = rel.split('/')[0]
   if (EXCLUDE_DIRS.has(top)) {
     // native/ is excluded except the landlock JS wrapper subtree, which the
