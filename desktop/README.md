@@ -46,7 +46,7 @@ pnpm run desktop:build             # build runtime + app for this platform
 ```
 
 The build targets are chosen per platform: NSIS on Windows, app bundle + DMG
-on macOS, DEB + AppImage on Linux. Override with
+on macOS (Apple Silicon), DEB + AppImage on Linux. Override with
 `node scripts/build.mjs --bundles <csv>`.
 
 `scripts/build-runtime.mjs` assembles the runtime: it copies the workspace

@@ -16,7 +16,8 @@ Windows, macOS, and Linux, with no changes to the web UI.
 
 - **Windows** — run `XYZ-OS_0.1.0_x64-setup.exe`. The app installs per user;
   SmartScreen may ask you to confirm because the installer is unsigned.
-- **macOS** — open `XYZ-OS_0.1.0_x64.dmg` and drag XYZ-OS into Applications.
+- **macOS** — open `XYZ-OS_0.1.0_aarch64.dmg` on an Apple Silicon Mac and drag
+  XYZ-OS into Applications.
   The app is unsigned, so the first open may require right-click → Open (or
   System Settings → Privacy & Security → Open Anyway).
 - **Linux** — install `xyz-os_0.1.0_amd64.deb` with your package manager, or
