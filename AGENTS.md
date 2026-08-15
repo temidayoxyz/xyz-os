@@ -147,3 +147,75 @@ Docs accompany every code change: update affected README and JSDoc contracts tog
 ## Vendoring policy
 
 `vendor/` packages are pinned source copies (manifest with upstream SHAs in [vendor/README.md](vendor/README.md)). Update via the sync procedure there; re-apply or retire the logged local modifications; rerun `pnpm run test && pnpm run build`.
+
+## XYZ-OS fork notes
+
+This repo is **XYZ-OS** — a private, personal fork of `deepseek-ai/deepseek-harness` (upstream). One engine, five modes (Coworker, Coder, Designer, Assistant, Creator), red brand (`#ff0000`). Everything else follows this file.
+
+### Remotes
+
+- `origin` → `github.com/temidayoxyz/xyz-os` (this fork)
+- `upstream` → `github.com/deepseek-ai/deepseek-harness` (track `master`)
+
+### Upstream sync routine
+
+Run this every week or two, not once a year:
+
+```sh
+git fetch upstream
+git merge upstream/master          # resolve conflicts; see touchpoints below
+pnpm install                       # required whenever pnpm-lock.yaml changed
+pnpm run build                     # required every time
+pnpm test                          # or at least the two rebrand specs (below)
+pnpm dsh web                       # boot smoke check — must serve HTTP 200 at http://127.0.0.1:3080
+```
+
+A merge is not done until the app boots. If upstream bumps `SCHEMA_VERSION` or
+renames a package the rebrand references, that is a semantic conflict —
+resolve deliberately, do not guess.
+
+### Rebrand touchpoints
+
+Expect conflicts here on every upstream pull:
+
+| File | What we changed |
+|------|-----------------|
+| `packages/client/ui-theme/src/styles/design-platform.css` | DeepSeek blue ramp → XYZ red ramp (`#ff0000` at 500); one hardcoded alias → red |
+| `packages/client/ui-primitives/src/BrandWordmark.tsx` | Whale wordmark → XYZ badge + `· OS` placeholder |
+| `apps/web/index.html` | `<title>` → `XYZ-OS`; `lang` → `en` (English-only UI) |
+| `apps/web/public/manifest.webmanifest` | name → `XYZ-OS`, short_name → `XYZ` |
+| `apps/web/public/favicon.svg` | Whale icon → red XYZ badge |
+| `packages/client/ui-settings-models/src/onboarding-copy.ts` | Welcome notice → XYZ-OS copy |
+| `packages/client/ui-settings-models/tests/welcome-notice.client.spec.tsx` | Test expects the new copy |
+| `packages/client/web/tests/document-title.client.spec.tsx` | Test expects the `XYZ-OS` title |
+| `apps/cli/config/agent-presets/*/preset.yml` | Preset names/descriptions → English |
+| `README.md` | Replaced — keep this fork's on conflict |
+
+When upstream changes one of these files, re-apply the XYZ-OS edit on top of
+their new version — take neither theirs (loses the brand) nor ours (loses
+their fixes).
+
+### Mode selection
+
+Modes are chosen from the preset chip on the new-session screen:
+
+| Preset id | Display name | What it is |
+|-----------|--------------|------------|
+| `standard` | Coworker | Full work agent — research and office work |
+| `code` | Coder | Coworker + Code Mode SDK — programming, building, shipping |
+| `design` | Designer | Design loop with skill packs (design-principles, design-qa) |
+| `minimal` | Assistant | Two-tool agent (shell + text editor) |
+| `cordis` | Creator | Authors new presets |
+
+Display copy resolves from
+`packages/client/ui-agent-preset/src/client/locales.ts` (`presetDisplayText`
+shadows `preset.yml` for shipped presets); the `design` preset lives in
+`apps/cli/config/agent-presets/design/` (new files, no conflicts).
+
+### Rules that keep upstream pulls cheap
+
+1. **Never rename the npm packages** (`@deepseek-ai/*`). Invisible to users; rename = merge pain.
+2. **Never blanket-replace `deepseek`** — provider names such as `deepseek-chat` stay intact; only user-facing brand strings change.
+3. **Add files, don't edit theirs**, wherever possible — new presets are new YAML, new plugins are new packages, new themes are new token layers.
+4. **Keep `LICENSE` and `THIRD_PARTY_NOTICES.md` intact** — MIT attribution is the legal contract.
+5. The `--dsw-static-blue-*` ramp is semantic (info/links) and stays blue; removing it would be a follow-up decision, not part of the rebrand.
