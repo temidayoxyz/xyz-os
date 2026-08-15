@@ -18,6 +18,7 @@
 import { execSync, spawnSync } from 'node:child_process'
 import {
   cpSync,
+  createWriteStream,
   existsSync,
   mkdirSync,
   readdirSync,
@@ -328,25 +329,31 @@ if (!skipVerify) {
 
 console.log('archiving runtime (tar + zstd level 19)...')
 const started = Date.now()
-await tar.c(
-  {
-    cwd: stageRoot,
-    portable: true,
-    mtime: new Date(0),
-    file: tarPath,
-    onWriteEntry(entry) {
-      // Windows junctions read back as absolute paths; rewrite their targets
-      // relative to the link's own directory so extraction is portable.
-      if (entry.type === 'SymbolicLink' && entry.linkpath) {
-        entry.linkpath = relative(resolve(stageRoot, dirname(entry.path)), entry.linkpath).replaceAll(
-          '\\',
-          '/',
-        )
-      }
+await new Promise((resolvePromise, rejectPromise) => {
+  const output = createWriteStream(tarPath)
+  output.on('error', rejectPromise)
+  output.on('close', resolvePromise)
+  const pack = tar.c(
+    {
+      cwd: stageRoot,
+      portable: true,
+      mtime: new Date(0),
+      onWriteEntry(entry) {
+        // Windows junctions read back as absolute paths; rewrite their targets
+        // relative to the link's own directory so extraction is portable.
+        if (entry.type === 'SymbolicLink' && entry.linkpath) {
+          entry.linkpath = relative(resolve(stageRoot, dirname(entry.path)), entry.linkpath).replaceAll(
+            '\\',
+            '/',
+          )
+        }
+      },
     },
-  },
-  ['.'],
-)
+    ['.'],
+  )
+  pack.on('error', rejectPromise)
+  pack.pipe(output)
+})
 const tarBytes = readFileSync(tarPath)
 writeFileSync(archivePath, await zstd.compress(tarBytes, 19))
 rmSync(tarPath, { force: true })
