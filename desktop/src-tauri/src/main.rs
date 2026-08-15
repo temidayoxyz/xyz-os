@@ -102,7 +102,9 @@ fn ensure_runtime(app: &tauri::AppHandle, version: &str) -> Result<PathBuf, Stri
         .map_err(|error| format!("cannot read runtime archive {}: {error}", archive.display()))?;
     let mut tar = Archive::new(decoder);
     tar.set_unpack_xattrs(false);
-    tar.set_preserve_permissions(false);
+    // Executable bits matter on Unix (node-pty's spawn helper); Windows
+    // ignores modes and a read-only tree would break future replacement.
+    tar.set_preserve_permissions(cfg!(unix));
     tar.set_preserve_mtime(false);
 
     let unpack = (|| -> Result<Vec<(PathBuf, PathBuf)>, String> {
@@ -285,7 +287,28 @@ fn main() {
                 Ok(_) => match spawn_engine(app.handle(), port) {
                     Some(mut child) => {
                         let stdout = child.stdout.take().expect("engine stdout");
+                        let stderr = child.stderr.take().expect("engine stderr");
                         let window_clone = window.clone();
+                        let engine_log = runtime_root(app.handle()).join("engine.log");
+                        // Record engine stderr so a failed boot is diagnosable
+                        // even though the GUI window cannot show a console.
+                        std::thread::spawn(move || {
+                            if let Ok(mut file) = fs::OpenOptions::new()
+                                .create(true)
+                                .truncate(true)
+                                .write(true)
+                                .open(&engine_log)
+                            {
+                                let reader = BufReader::new(stderr);
+                                for line in reader.lines().map_while(Result::ok) {
+                                    if file.write_all(line.as_bytes()).is_err()
+                                        || file.write_all(b"\n").is_err()
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                        });
                         // Watch the engine log for the local URL, then navigate.
                         std::thread::spawn(move || {
                             let reader = BufReader::new(stdout);

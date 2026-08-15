@@ -11,7 +11,6 @@
   },
   "devDependencies": {
     "@mongodb-js/zstd": "^2.0.0",
-    "@tauri-apps/cli": "^2",
-    "tar": "^7"
+    "@tauri-apps/cli": "^2"
   }
 }

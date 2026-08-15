@@ -18,7 +18,6 @@
 import { execSync, spawnSync } from 'node:child_process'
 import {
   cpSync,
-  createWriteStream,
   existsSync,
   mkdirSync,
   readdirSync,
@@ -27,9 +26,8 @@ import {
   statSync,
   writeFileSync,
 } from 'node:fs'
-import { dirname, join, relative, resolve } from 'node:path'
+import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import * as tar from 'tar'
 import zstd from '@mongodb-js/zstd'
 
 const desktopRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -329,31 +327,15 @@ if (!skipVerify) {
 
 console.log('archiving runtime (tar + zstd level 19)...')
 const started = Date.now()
-await new Promise((resolvePromise, rejectPromise) => {
-  const output = createWriteStream(tarPath)
-  output.on('error', rejectPromise)
-  output.on('close', resolvePromise)
-  const pack = tar.c(
-    {
-      cwd: stageRoot,
-      portable: true,
-      mtime: new Date(0),
-      onWriteEntry(entry) {
-        // Windows junctions read back as absolute paths; rewrite their targets
-        // relative to the link's own directory so extraction is portable.
-        if (entry.type === 'SymbolicLink' && entry.linkpath) {
-          entry.linkpath = relative(resolve(stageRoot, dirname(entry.path)), entry.linkpath).replaceAll(
-            '\\',
-            '/',
-          )
-        }
-      },
-    },
-    ['.'],
-  )
-  pack.on('error', rejectPromise)
-  pack.pipe(output)
-})
+const writeTar = spawnSync(
+  process.execPath,
+  [join(desktopRoot, 'scripts', 'write-runtime-tar.mjs'), stageRoot, tarPath],
+  { stdio: 'inherit', env: process.env },
+)
+if (writeTar.status !== 0) {
+  console.error('write-runtime-tar failed')
+  process.exit(1)
+}
 const tarBytes = readFileSync(tarPath)
 writeFileSync(archivePath, await zstd.compress(tarBytes, 19))
 rmSync(tarPath, { force: true })
