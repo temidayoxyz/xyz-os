@@ -13,10 +13,14 @@
 // packed engine and checks the web UI answers before the script reports
 // success.
 //
-// Usage: node scripts/build-runtime.mjs [--skip-verify] [--skip-copy] [--keep-stage]
+// Usage:
+//   node scripts/build-runtime.mjs [--skip-verify] [--skip-copy] [--keep-stage]
+//                                  [--engine-triple <rust-triple>] [--universal-macos]
 
 import { execSync, spawnSync } from 'node:child_process'
 import {
+  appendFileSync,
+  chmodSync,
   cpSync,
   existsSync,
   mkdirSync,
@@ -39,6 +43,12 @@ const tarPath = join(runtimeRoot, 'runtime.tar')
 const skipVerify = process.argv.includes('--skip-verify')
 const skipCopy = process.argv.includes('--skip-copy')
 const keepStage = process.argv.includes('--keep-stage')
+const universalMacos = process.argv.includes('--universal-macos')
+const engineTripleIndex = process.argv.indexOf('--engine-triple')
+const engineTriple =
+  engineTripleIndex !== -1 && process.argv[engineTripleIndex + 1]
+    ? process.argv[engineTripleIndex + 1]
+    : null
 
 const EXCLUDE_DIRS = new Set([
   '.agents',
@@ -230,13 +240,27 @@ if (skipCopy) {
   // Harness packages declare @deepseek-ai/cordis as a peer dependency, so the
   // production-only install must still link peers or the engine cannot boot.
   writeFileSync(join(stageRoot, '.npmrc'), 'auto-install-peers=true\n')
+  if (universalMacos) {
+    // A universal macOS app runs one runtime tree on both Intel and Apple
+    // Silicon. pnpm therefore installs both darwin CPU variants of optional
+    // platform packages (koffi, sharp, ripgrep, and the SDK binaries) so the
+    // engine resolves the native module for whichever slice macOS executes.
+    const workspaceManifest = join(stageRoot, 'pnpm-workspace.yaml')
+    const extra = ['', 'supportedArchitectures:', '  os: [darwin]', '  cpu: [x64, arm64]', ''].join('\n')
+    if (!readFileSync(workspaceManifest, 'utf8').includes('supportedArchitectures:')) {
+      appendFileSync(workspaceManifest, extra)
+    }
+  }
 }
 
-// Production-only dependency install, served from the pnpm store.
-console.log('pnpm install --offline --prod ...')
+// Production-only dependency install. Served from the pnpm store when the
+// bundle targets only the current platform; the universal macOS bundle needs
+// the x64 variants fetched into the store, so it cannot stay offline.
+const installArgs = universalMacos ? ['install', '--prod'] : ['install', '--offline', '--prod']
+console.log(`pnpm ${installArgs.join(' ')} ...`)
 const install = spawnSync(
   process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm',
-  ['install', '--offline', '--prod'],
+  installArgs,
   {
     cwd: stageRoot,
     shell: process.platform === 'win32',
@@ -344,8 +368,48 @@ writeFileSync(archivePath, await zstd.compress(tarBytes, 19))
 rmSync(tarPath, { force: true })
 console.log(`archive written in ${Math.round((Date.now() - started) / 1000)}s`)
 
+// Download the two macOS Node builds and merge them with `lipo` so the single
+// sidecar runs on Intel and Apple Silicon alike. `lipo` and the x86_64 Xcode
+// toolchain exist on the Apple Silicon hosted runners this step targets.
+async function writeUniversalEngine(engineDst) {
+  if (process.platform !== 'darwin') {
+    console.error('--universal-macos is only valid on a macOS host')
+    process.exit(1)
+  }
+  const version = process.version
+  const workRoot = join(runtimeRoot, '.universal-engine')
+  rmSync(workRoot, { recursive: true, force: true })
+  mkdirSync(workRoot, { recursive: true })
+  const slices = {}
+  for (const arch of ['arm64', 'x64']) {
+    const url = `https://nodejs.org/dist/${version}/node-${version}-darwin-${arch}.tar.gz`
+    const archive = join(workRoot, `node-${arch}.tar.gz`)
+    console.log(`engine: fetching ${url}`)
+    const response = await fetch(url)
+    if (!response.ok) {
+      console.error(`engine download failed: ${response.status} ${response.statusText}`)
+      process.exit(1)
+    }
+    writeFileSync(archive, Buffer.from(await response.arrayBuffer()))
+    const extractRoot = join(workRoot, arch)
+    mkdirSync(extractRoot, { recursive: true })
+    execSync(`tar -xzf "${archive}" -C "${extractRoot}"`, { stdio: 'inherit' })
+    slices[arch] = join(extractRoot, `node-${version}-darwin-${arch}`, 'bin', 'node')
+    if (!existsSync(slices[arch])) {
+      console.error(`engine extraction did not produce ${slices[arch]}`)
+      process.exit(1)
+    }
+  }
+  execSync(`lipo -create "${slices.arm64}" "${slices.x64}" -output "${engineDst}"`, {
+    stdio: 'inherit',
+  })
+  chmodSync(engineDst, 0o755)
+  rmSync(workRoot, { recursive: true, force: true })
+  console.log(`engine: universal Node ${version} -> ${engineDst}`)
+}
+
 // Ship the machine's Node as the engine Tauri places beside the executable.
-const triple = hostTriple()
+const triple = engineTriple ?? hostTriple()
 const engineDst = join(
   desktopRoot,
   'src-tauri',
@@ -353,8 +417,12 @@ const engineDst = join(
   `xyz-engine-${triple}${process.platform === 'win32' ? '.exe' : ''}`,
 )
 mkdirSync(join(desktopRoot, 'src-tauri', 'binaries'), { recursive: true })
-cpSync(process.execPath, engineDst)
-console.log(`engine: ${process.execPath} -> ${engineDst}`)
+if (triple === 'universal-apple-darwin') {
+  await writeUniversalEngine(engineDst)
+} else {
+  cpSync(process.execPath, engineDst)
+  console.log(`engine: ${process.execPath} -> ${engineDst}`)
+}
 
 if (!keepStage) {
   rmSync(stageRoot, { recursive: true, force: true })

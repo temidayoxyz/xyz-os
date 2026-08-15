@@ -54,9 +54,10 @@ pnpm install                        # desktop-only tooling
 pnpm run desktop:build             # build runtime + app for this platform
 ```
 
-The build targets are chosen per platform: NSIS on Windows, app bundle + DMG
-on macOS (Apple Silicon), DEB + AppImage on Linux. Override with
-`node scripts/build.mjs --bundles <csv>`.
+The build targets are chosen per platform: NSIS + MSI on Windows, an app
+bundle + universal DMG on macOS (one package for Intel and Apple Silicon),
+DEB + AppImage on Linux. Override with
+`node scripts/build.mjs --bundles <csv> --target <rust-triple>`.
 
 `scripts/build-runtime.mjs` assembles the runtime: it copies the workspace
 (excluding dev-only trees), installs production dependencies from the pnpm
@@ -87,5 +88,6 @@ variable pins the engine port for automated smoke tests.
 
 Push a `desktop-v*` tag. The `Desktop` workflow builds all three platforms,
 smoke-tests each package, and publishes the installers to a GitHub release
-with the notes from `RELEASE_NOTES.md`. macOS and Linux builds are unsigned
-unless signing credentials are configured.
+with the notes from `RELEASE_NOTES.md`. The macOS DMG is universal, covering
+both Intel and Apple Silicon in one download. macOS and Linux builds are
+unsigned unless signing credentials are configured.

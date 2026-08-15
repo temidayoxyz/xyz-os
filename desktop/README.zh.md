@@ -31,7 +31,7 @@ pnpm install                        # desktop-only tooling
 pnpm run desktop:build             # build runtime + app for this platform
 ```
 
-打包目标按平台选择：Windows 为 NSIS，macOS（Apple Silicon）为 app bundle + DMG，Linux 为 DEB + AppImage。可用 `node scripts/build.mjs --bundles <csv>` 覆盖。
+打包目标按平台选择：Windows 为 NSIS + MSI，macOS 为 app bundle + 通用 DMG（一个安装包同时支持 Intel 与 Apple Silicon），Linux 为 DEB + AppImage。可用 `node scripts/build.mjs --bundles <csv> --target <rust-triple>` 覆盖。
 
 `scripts/build-runtime.mjs` 负责组装运行时：复制工作区（排除仅开发用的目录）、从 pnpm store 安装生产依赖、恢复工作区 peer 链接、丢弃悬空的可选依赖链接、验证打包后的引擎能启动并提供 UI，最后归档整棵树。`--skip-copy` 复用已暂存的树；`--skip-verify` 跳过启动检查。
 
@@ -53,4 +53,4 @@ pnpm run desktop:dev
 
 ## 发布
 
-推送 `desktop-v*` 标签。`Desktop` 工作流会在三个平台上构建、冒烟测试每个安装包，并把安装包连同 `RELEASE_NOTES.md` 中的说明发布到 GitHub Release。未配置签名凭据时，macOS 与 Linux 构建不签名。
+推送 `desktop-v*` 标签。`Desktop` 工作流会在三个平台上构建、冒烟测试每个安装包，并把安装包连同 `RELEASE_NOTES.md` 中的说明发布到 GitHub Release。macOS 的 DMG 为通用包，一次下载即可覆盖 Intel 与 Apple Silicon。未配置签名凭据时，macOS 与 Linux 构建不签名。
