@@ -40,9 +40,7 @@ jobs:
             os: ubuntu-24.04
             bundles: deb,appimage
             artifact: xyz-os-linux-x64
-            files: |
-              desktop/src-tauri/target/release/bundle/deb/*.deb
-              desktop/src-tauri/target/release/bundle/appimage/*.AppImage
+            files: desktop/src-tauri/target/release/bundle/deb/*.deb desktop/src-tauri/target/release/bundle/appimage/*.AppImage
     steps:
       # The repository ships CLAUDE.md as symlinks, one with a target too long
       # for a symlink on hosted runners and none of them creatable on Windows
