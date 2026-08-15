@@ -39,7 +39,7 @@ jobs:
             os: macos-14
             bundles: app,dmg
             target: universal-apple-darwin
-            binary: desktop/src-tauri/target/universal-apple-darwin/release/xyz-os
+            binary: desktop/src-tauri/target/universal-apple-darwin/release/bundle/macos/XYZ-OS.app/Contents/MacOS/xyz-os
             artifact: xyz-os-macos-universal
             files: desktop/src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
             release_files: desktop/src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
