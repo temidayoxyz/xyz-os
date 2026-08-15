@@ -368,10 +368,13 @@ writeFileSync(archivePath, await zstd.compress(tarBytes, 19))
 rmSync(tarPath, { force: true })
 console.log(`archive written in ${Math.round((Date.now() - started) / 1000)}s`)
 
-// Download the two macOS Node builds and merge them with `lipo` so the single
-// sidecar runs on Intel and Apple Silicon alike. `lipo` and the x86_64 Xcode
-// toolchain exist on the Apple Silicon hosted runners this step targets.
-async function writeUniversalEngine(engineDst) {
+// Download the two macOS Node builds for a universal bundle. Tauri compiles
+// the app once per CPU and looks each sidecar up by that build's target
+// triple, so both per-arch binaries must exist in `binaries/`; the bundler
+// then merges them into the universal app. A lipo'd universal copy is written
+// too, satisfying the universal-named lookup the bundler performs itself.
+// `lipo` and the x86_64 Xcode toolchain exist on the hosted runners.
+async function writeUniversalEngines(binariesDir) {
   if (process.platform !== 'darwin') {
     console.error('--universal-macos is only valid on a macOS host')
     process.exit(1)
@@ -400,25 +403,29 @@ async function writeUniversalEngine(engineDst) {
       process.exit(1)
     }
   }
-  execSync(`lipo -create "${slices.arm64}" "${slices.x64}" -output "${engineDst}"`, {
+  const archTriples = { arm64: 'aarch64-apple-darwin', x64: 'x86_64-apple-darwin' }
+  for (const [arch, archTriple] of Object.entries(archTriples)) {
+    const archDst = join(binariesDir, `xyz-engine-${archTriple}`)
+    cpSync(slices[arch], archDst)
+    chmodSync(archDst, 0o755)
+    console.log(`engine: darwin ${arch} Node ${version} -> ${archDst}`)
+  }
+  const universalDst = join(binariesDir, 'xyz-engine-universal-apple-darwin')
+  execSync(`lipo -create "${slices.arm64}" "${slices.x64}" -output "${universalDst}"`, {
     stdio: 'inherit',
   })
-  chmodSync(engineDst, 0o755)
+  chmodSync(universalDst, 0o755)
   rmSync(workRoot, { recursive: true, force: true })
-  console.log(`engine: universal Node ${version} -> ${engineDst}`)
+  console.log(`engine: universal Node ${version} -> ${universalDst}`)
 }
 
 // Ship the machine's Node as the engine Tauri places beside the executable.
 const triple = engineTriple ?? hostTriple()
-const engineDst = join(
-  desktopRoot,
-  'src-tauri',
-  'binaries',
-  `xyz-engine-${triple}${process.platform === 'win32' ? '.exe' : ''}`,
-)
-mkdirSync(join(desktopRoot, 'src-tauri', 'binaries'), { recursive: true })
+const binariesDir = join(desktopRoot, 'src-tauri', 'binaries')
+const engineDst = join(binariesDir, `xyz-engine-${triple}${process.platform === 'win32' ? '.exe' : ''}`)
+mkdirSync(binariesDir, { recursive: true })
 if (triple === 'universal-apple-darwin') {
-  await writeUniversalEngine(engineDst)
+  await writeUniversalEngines(binariesDir)
 } else {
   cpSync(process.execPath, engineDst)
   console.log(`engine: ${process.execPath} -> ${engineDst}`)

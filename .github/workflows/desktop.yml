@@ -29,7 +29,6 @@ jobs:
           - name: windows-x64
             os: windows-latest
             bundles: nsis,msi
-            target: x86_64-pc-windows-msvc
             binary: desktop/src-tauri/target/release/xyz-os.exe
             artifact: xyz-os-windows-x64
             files: |
@@ -47,7 +46,6 @@ jobs:
           - name: linux-x64
             os: ubuntu-24.04
             bundles: deb,appimage
-            target: x86_64-unknown-linux-gnu
             binary: desktop/src-tauri/target/release/xyz-os
             artifact: xyz-os-linux-x64
             files: |
@@ -109,7 +107,7 @@ jobs:
         run: pnpm run build
 
       - name: Build desktop app
-        run: cd desktop && node scripts/build.mjs --bundles ${{ matrix.bundles }} --target ${{ matrix.target }}
+        run: cd desktop && node scripts/build.mjs --bundles ${{ matrix.bundles }}${{ matrix.target && format(' --target {0}', matrix.target) }}
 
       - name: Smoke test (macOS)
         if: runner.os == 'macOS'
@@ -170,7 +168,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           TAG="${{ github.ref_name }}"
-          gh release create "$TAG" \
-            --title "XYZ-OS Desktop $TAG" \
-            --notes-file desktop/RELEASE_NOTES.md || true
+          gh release view "$TAG" >/dev/null 2>&1 \
+            || gh release create "$TAG" \
+              --title "XYZ-OS Desktop $TAG" \
+              --notes-file desktop/RELEASE_NOTES.md
           gh release upload "$TAG" ${{ matrix.release_files }} --clobber
