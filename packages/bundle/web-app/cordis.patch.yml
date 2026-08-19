@@ -250,6 +250,10 @@
     - id: ui-model-selection
       name: '@deepseek-ai/dsh-client-ui-model-selection'
 
+    # DeepSeek peak/off-peak chip under the composer. Hidden on other providers.
+    - id: ui-deep-tariff
+      name: '@deepseek-ai/dsh-client-ui-deep-tariff'
+
     - id: ui-permission
       name: '@deepseek-ai/dsh-client-ui-permission-presets'
 
