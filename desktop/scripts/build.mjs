@@ -20,7 +20,10 @@ function defaultBundles() {
 }
 
 function run(command, args, label) {
-  const result = spawnSync(command, args, {
+  // cmd.exe splits an unquoted command at spaces, which breaks any Node
+  // installed under "C:\Program Files".
+  const quoted = process.platform === 'win32' ? `"${command}"` : command
+  const result = spawnSync(quoted, args, {
     cwd: desktopRoot,
     stdio: 'inherit',
     shell: process.platform === 'win32',
