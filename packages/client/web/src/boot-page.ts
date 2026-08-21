@@ -40,11 +40,11 @@ export class BootPage {
     const lightLogo = document.createElement('img')
     lightLogo.src = '/xyz-light.png'
     lightLogo.alt = ''
-    lightLogo.className = css.lightLogo
+    lightLogo.className = css.lightLogo ?? ''
     const darkLogo = document.createElement('img')
     darkLogo.src = '/xyz-dark.png'
     darkLogo.alt = ''
-    darkLogo.className = css.darkLogo
+    darkLogo.className = css.darkLogo ?? ''
     this.wordmark.append(lightLogo, darkLogo)
     this.spinner = div(css.spinner)
     this.spinner.dataset.dshBootSpinner = ''

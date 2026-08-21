@@ -216,9 +216,14 @@ describe('formatHm', () => {
   })
 
   it('throws when Intl omits hour or minute parts', () => {
-    vi.spyOn(Intl, 'DateTimeFormat').mockReturnValue({
-      formatToParts: () => [],
-    } as unknown as Intl.DateTimeFormat)
+    // vitest 4 forbids `mockReturnValue` on constructor calls; a plain
+    // function that returns the stub works for `new` (the returned object
+    // wins over the constructed instance).
+    vi.spyOn(Intl, 'DateTimeFormat').mockImplementation(
+      function () {
+        return { formatToParts: () => [] }
+      } as unknown as typeof Intl.DateTimeFormat,
+    )
     expect(() => formatHm(new Date('2026-08-19T01:00:00.000Z'), 'UTC'))
       .toThrow(/could not format a local clock/)
   })

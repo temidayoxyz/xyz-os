@@ -27,6 +27,13 @@ interface SpendState {
   last: Sample | null
 }
 
+declare module '@deepseek-ai/dsh-session-projection/types' {
+  interface SessionProjectionStateMap {
+    /** Host fold state behind the client-visible {@link DeepTariffSpendProjection}. */
+    deepTariffSpend: SpendState
+  }
+}
+
 const zero = (): DeepTariffSpendProjection => ({
   uncachedInputTokens: 0,
   cacheReadTokens: 0,
@@ -34,11 +41,25 @@ const zero = (): DeepTariffSpendProjection => ({
   usd: 0,
 })
 
-const schema = z.object({
+const bucketsSchema = z.object({
   uncachedInputTokens: z.number().int().nonnegative(),
   cacheReadTokens: z.number().int().nonnegative(),
   outputTokens: z.number().int().nonnegative(),
+}).strict()
+
+const viewSchema: z.ZodType<DeepTariffSpendProjection> = bucketsSchema.extend({
   usd: z.number().nonnegative(),
+}).strict()
+
+const stateSchema = z.object({
+  route: z.object({ provider: z.string(), model: z.string() }).nullable(),
+  totals: viewSchema,
+  last: z.object({
+    turn: z.number().int().nonnegative(),
+    step: z.number().int().nonnegative(),
+    buckets: bucketsSchema,
+    usd: z.number().nonnegative(),
+  }).nullable(),
 }).strict()
 
 const bucketsFrom = (usage: TokenUsage): UsageBuckets => ({
@@ -81,15 +102,12 @@ const usageOf = (event: SessionEvent): { turn: number; step: number; usage: Toke
  * @param table - Official or config-overridden tariff.
  * @returns Projection definition registered on `ctx.sessionProjections`.
  */
-export function deepTariffSpendProjection(
-  table: TariffTable,
-): ProjectionDefinition<'deepTariffSpend', SpendState> {
+export function deepTariffSpendProjection(table: TariffTable) {
   return {
     key: 'deepTariffSpend',
-    schema,
-    stateVersion: 1,
+    stateSchema,
+    stateVersion: 2,
     init: () => ({ route: null, totals: zero(), last: null }),
-    view: state => state.totals,
     apply: (state, event) => {
       if (event.type === 'request/header') {
         const { provider, model } = event.data.header.config
@@ -124,5 +142,6 @@ export function deepTariffSpendProjection(
         last: next,
       }
     },
-  }
+    wire: { viewSchema, view: state => state.totals },
+  } satisfies ProjectionDefinition<'deepTariffSpend', SpendState>
 }
