@@ -69,13 +69,13 @@ describe('FishLogo', () => {
 
 describe('BrandWordmark', () => {
   it('can render the name artwork with or without its leading mark', () => {
+    // XYZ-OS: the wordmark is the logo-pair <img>, so there is no svg
+    // artwork; includeMark stays a call-site-compatible no-op.
     const view = render(<primitives.BrandWordmark />)
-    const svg = view.container.querySelector('svg')!
-    expect(svg.getAttribute('width')).toBe('182')
-    expect(svg.getAttribute('viewBox')).toBe('0 0 182 24')
+    expect(view.container.querySelector('img[src="/xyz-light.png"]')).toBeTruthy()
+    expect(view.container.querySelector('img[src="/xyz-dark.png"]')).toBeTruthy()
 
     view.rerender(<primitives.BrandWordmark includeMark={false} />)
-    expect(svg.getAttribute('width')).toBe('156')
-    expect(svg.getAttribute('viewBox')).toBe('26 0 156 24')
+    expect(view.container.querySelector('img[src="/xyz-light.png"]')).toBeTruthy()
   })
 })

@@ -61,11 +61,12 @@ describe('ui-deep-tariff browser half', () => {
   it('registers both dictionaries under its own namespace and releases them with the fiber', async () => {
     const { ctx, fiber } = await bench()
     const translate = ctx.locale.bind(NS)
-    expect(translate('window.peak')).toBe(zh['window.peak'])
-    ctx.locale.setLocale('en')
+    // Upstream flipped the no-preference default locale from zh to en.
     expect(translate('window.peak')).toBe(en['window.peak'])
+    ctx.locale.setLocale('zh')
+    expect(translate('window.peak')).toBe(zh['window.peak'])
     await fiber.dispose()
-    expect(translate('window.peak')).not.toBe(en['window.peak'])
+    expect(translate('window.peak')).not.toBe(zh['window.peak'])
   })
 
   it('keeps the English dictionary key-identical to the Chinese source of truth', () => {

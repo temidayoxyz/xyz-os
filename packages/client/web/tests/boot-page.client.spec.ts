@@ -14,7 +14,8 @@ describe('BootPage', () => {
   it('draws the loading skeleton before any plugin state arrives', () => {
     const { el } = mount()
     expect(el.firstElementChild?.getAttribute('data-dsh-boot')).toBe('')
-    expect(el.textContent).toContain('HARNESS')
+    // XYZ-OS: the wordmark seat holds the logo pair (no HARNESS text).
+    expect(el.querySelector('img[src="/xyz-light.png"]')).toBeTruthy()
     expect(el.textContent).toContain('Loading plugins…')
   })
 
