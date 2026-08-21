@@ -33,7 +33,7 @@
 
 ## 组合
 
-base bundle 挂载此行，使每个 profile（包括桌面引擎）共用同一解析器。浏览器条是 [`@deepseek-ai/dsh-client-ui-deep-tariff`](../../client/ui-deep-tariff/README.md)。
+base bundle 挂载此行，使每个 profile（包括桌面引擎）共用同一解析器。浏览器条是 [`@deepseek-ai/dsh-client-ui-deep-tariff`](../../client/ui-deep-tariff/README.zh.md)。
 
 ## Model Experience
 

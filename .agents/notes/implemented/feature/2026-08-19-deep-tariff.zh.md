@@ -12,8 +12,8 @@ DeepSeek 官方 API 对 `deepseek-v4-flash` 与 `deepseek-v4-pro` 按两个 UTC 
 
 一套仅针对 DeepSeek 的能力，两个包共用一份同构日程：
 
-- [`@deepseek-ai/dsh-deep-tariff`](../../../../packages/llm/deep-tariff/README.md) 拥有 `ctx.deepTariff` 与官方价表。UTC 是唯一判定依据。`resolve({ now, timeZone, provider, model })` 返回窗口、单价、下一次切换，以及高峰窗口的本地时钟副本；不在本表上则返回 `null`。
-- [`@deepseek-ai/dsh-client-ui-deep-tariff`](../../../../packages/client/ui-deep-tariff/README.md) 读取会话模型目录，采样 `Intl.DateTimeFormat().resolvedOptions().timeZone`，并在 `conversation.composer.dock`（输入框下方、统计行之后）注册一条。它在本地对 `nextTransitionAt` 倒计时。出现第一笔 DeepSeek 计费样本后还会显示本会话的 token 与美元（`deepTariffSpend`），每一笔按该次请求当时的 UTC 窗口和模型计价。文案走 `deepTariff` 的 `{zh,en}` 命名空间。
+- [`@deepseek-ai/dsh-deep-tariff`](../../../../packages/llm/deep-tariff/README.zh.md) 拥有 `ctx.deepTariff` 与官方价表。UTC 是唯一判定依据。`resolve({ now, timeZone, provider, model })` 返回窗口、单价、下一次切换，以及高峰窗口的本地时钟副本；不在本表上则返回 `null`。
+- [`@deepseek-ai/dsh-client-ui-deep-tariff`](../../../../packages/client/ui-deep-tariff/README.zh.md) 读取会话模型目录，采样 `Intl.DateTimeFormat().resolvedOptions().timeZone`，并在 `conversation.composer.dock`（输入框下方、统计行之后）注册一条。它在本地对 `nextTransitionAt` 倒计时。出现第一笔 DeepSeek 计费样本后还会显示本会话的 token 与美元（`deepTariffSpend`），每一笔按该次请求当时的 UTC 窗口和模型计价。文案走 `deepTariff` 的 `{zh,en}` 命名空间。
 
 浏览器打包只内联 `@deepseek-ai/dsh-deep-tariff/schedule`，不内联服务，因此条与宿主解析器不会分叉。日后的桌面端复用两半：引擎已通过 `dsh-base` 挂载宿主行，Tauri webview 就是同一套 Web UI。
 

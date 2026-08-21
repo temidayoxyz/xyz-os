@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write packages/client/ui-deep-tariff/README.md
 README.md: 5064edc99f9f90af2f1f2e5c96b1e46a50e1bc42
-README.zh.md: 7cb12cfae619362eeb4d8d65899dd45f987ede0d
+README.zh.md: 795329937ffdb95d75fbf1ecf6ed11ee48374c85

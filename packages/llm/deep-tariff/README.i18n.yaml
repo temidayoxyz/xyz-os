@@ -3,4 +3,4 @@
 # after editing either side, bring the other along and re-record with:
 #   pnpm run verify-translation-pairing --write packages/llm/deep-tariff/README.md
 README.md: 0bd51b8708e028b3c3969c30ac00bf4940bbfe03
-README.zh.md: afd18b7af48733e43dce509cb2bffc149cf15a82
+README.zh.md: ccaf2e00e5daca70181d564dfad72becbd41bba7

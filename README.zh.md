@@ -63,11 +63,11 @@ pnpm dsh web
 
 桌面应用是包裹本引擎的一层轻量 Rust/Tauri 外壳。它打包引擎运行时，在空闲的 loopback 端口上启动，并在原生窗口中打开同一个 Web UI——内部不包含任何 API 密钥或模型凭据。每次推送 `desktop-v*` 标签，CI 都会产出 Windows（NSIS）、macOS（Apple Silicon，DMG）与 Linux（DEB + AppImage）的安装包。
 
-架构、构建方法与发布流程见 [desktop/README.md](desktop/README.md)。
+架构、构建方法与发布流程见 [desktop/README.md](desktop/README.zh.md)。
 
 ## 架构
 
-引擎是一张插件图：每个能力都是一个插件，通过类型化服务、事件与扩展点参与组合。源码树分为 `packages/`（产品 API 与提供方）、`vendor/`（vendor 的 Cordis 框架，重新作用域为 `@deepseek-ai`）、`apps/`（CLI 与 Web 前端）、`native/`（Landlock 沙箱绑定）与 `python/`（Python SDK 与捆绑运行时）。详见 [docs/architecture.md](docs/architecture.md)。
+引擎是一张插件图：每个能力都是一个插件，通过类型化服务、事件与扩展点参与组合。源码树分为 `packages/`（产品 API 与提供方）、`vendor/`（vendor 的 Cordis 框架，重新作用域为 `@deepseek-ai`）、`apps/`（CLI 与 Web 前端）、`native/`（Landlock 沙箱绑定）与 `python/`（Python SDK 与捆绑运行时）。详见 [docs/architecture.md](docs/architecture.zh.md)。
 
 ## 品牌
 

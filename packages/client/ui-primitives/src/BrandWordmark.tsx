@@ -6,13 +6,23 @@
 import type { IconProps } from './icons/props.ts'
 import css from './BrandWordmark.module.css'
 
+/** Display options for the brand wordmark. */
+export interface BrandWordmarkProps extends IconProps {
+  /**
+   * Upstream's mark-less variant toggle; accepted for call-site
+   * compatibility. The XYZ logo is a single piece of art, so the prop is a
+   * no-op here.
+   */
+  includeMark?: boolean | undefined
+}
+
 /**
  * Render the full brand wordmark.
  * @param props.size - height in px (default 24; width keeps the logo ratio).
  * @param props.className - extra class for layout placement.
  * @returns the wordmark (aria-hidden decorative brand art).
  */
-export function BrandWordmark({ size = 24, className }: IconProps) {
+export function BrandWordmark({ size = 24, className }: BrandWordmarkProps) {
   return (
     <span className={className} style={{ height: size }} aria-hidden="true">
       <img src="/xyz-light.png" alt="" className={css.light} style={{ height: size }} />

@@ -102,6 +102,8 @@ export function HeroGlow({ className }: { className?: string | undefined }) {
 export interface HeroShellProps {
   /** The owner's locale seat, passed down as a plain prop. */
   t: HeroTranslate
+  /** Authorized renderer for the hero brand-mark slot. */
+  renderSlot: ConversationSlotProps['renderSlot']
   /** Overlay content after the stack (modals). */
   children?: ReactNode
 }
@@ -112,7 +114,7 @@ export interface HeroShellProps {
  * @param props - see {@link HeroShellProps}.
  * @returns the centered hero element tree.
  */
-export function HeroShell({ children }: HeroShellProps) {
+export function HeroShell({ renderSlot, children }: HeroShellProps) {
   return (
     <div className={css.root}>
       <div className={css.stack}>
@@ -120,7 +122,9 @@ export function HeroShell({ children }: HeroShellProps) {
           {/* XYZ-OS: the hero mark is the XYZ logo alone (was the fish and
               the "Into the Unknown" slogan) — same hitbox, same 34px seat. */}
           <span className={css.fishHitbox}>
-            <img src="/favicon.png" alt="" width={34} height={34} className={css.fish} />
+            {renderSlot('conversation.hero.brand.mark', { size: 34, className: css.fish }, {
+              fallback: <img src="/favicon.png" alt="" width={34} height={34} className={css.fish} />,
+            })}
           </span>
         </div>
         <div className={css.body}>

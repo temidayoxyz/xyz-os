@@ -18,7 +18,9 @@ pre-commit:
       glob: '*.{ts,tsx,mts,cts,mjs}'
       exclude:
         - 'vendor/*/src/**'
-      run: node_modules/.bin/tsx scripts/run-oxlint.ts --config .oxlintrc.staged.json --fix --no-error-on-unmatched-pattern {staged_files}
+      # Batch through xargs: a merge commit can stage hundreds of files, and
+      # one giant argv exceeds the ~32k Windows process-command limit.
+      run: printf '%s\n' {staged_files} | xargs -n 64 node_modules/.bin/tsx scripts/run-oxlint.ts --config .oxlintrc.staged.json --fix --no-error-on-unmatched-pattern
       stage_fixed: true
 
     # Regenerate rather than reject: a dependency edit that forgot the notices
