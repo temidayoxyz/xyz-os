@@ -144,14 +144,9 @@ export function SidebarRoot({
               </span>
               <span className={css.brandName}>
                 {renderSlot('sidebar.brand.name', {}, {
-                  fallback: (
-                    <>
-                      <span className={css.fallbackBrandName}>XYZ-OS</span>
-                      {process.env.DSH_CLIENT_COMMIT_HASH
-                        ? <span className={css.buildRevision}>{process.env.DSH_CLIENT_COMMIT_HASH}</span>
-                        : null}
-                    </>
-                  ),
+                  // XYZ-OS: no build-revision stamp — personal fork, not a
+                  // release artifact.
+                  fallback: <span className={css.fallbackBrandName}>XYZ-OS</span>,
                 })}
               </span>
             </span>

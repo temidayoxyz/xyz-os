@@ -94,7 +94,6 @@ describe('SidebarRoot shell', () => {
   })
 
   it('renders generic brand fallbacks when no package fills the slots', () => {
-    vi.stubEnv('DSH_CLIENT_COMMIT_HASH', '0123456')
     const { container } = render(<SidebarRoot
       collapsed={false} width={300}
       useSessions={neverHook} useWorkspaces={neverHook}
@@ -103,8 +102,9 @@ describe('SidebarRoot shell', () => {
         options?.fallback ?? null) as SidebarRootComponentProps['renderSlot']}
     />)
 
-    expect(screen.getByText('DSH Local Build')).toBeTruthy()
-    expect(screen.getByText('0123456')).toBeTruthy()
+    // XYZ-OS: the fallback name is the fork brand; no build-revision stamp.
+    expect(screen.getByText('XYZ-OS')).toBeTruthy()
+    expect(screen.queryByText('0123456')).toBeNull()
     expect(container.querySelector('svg')).not.toBeNull()
   })
 

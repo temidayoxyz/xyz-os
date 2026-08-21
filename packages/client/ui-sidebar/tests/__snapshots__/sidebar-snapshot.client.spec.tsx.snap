@@ -138,11 +138,6 @@ exports[`sidebar shell snapshots > renders the expanded column (wordmark, capsul
               >
                 XYZ-OS
               </span>
-              <span
-                class="buildRevision"
-              >
-                abc1234
-              </span>
             </div>
           </span>
         </span>
@@ -261,11 +256,6 @@ exports[`sidebar shell snapshots > renders the expanded column in the default lo
                 class="fallbackBrandName"
               >
                 XYZ-OS
-              </span>
-              <span
-                class="buildRevision"
-              >
-                abc1234
               </span>
             </div>
           </span>
