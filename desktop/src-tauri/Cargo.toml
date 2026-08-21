@@ -1,6 +1,6 @@
 [package]
 name = "xyz-os"
-version = "0.1.0"
+version = "0.1.1"
 description = "XYZ-OS desktop shell — a thin window around the local agent engine"
 authors = ["Temidayo XYZ"]
 edition = "2021"
